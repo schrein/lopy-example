@@ -67,14 +67,14 @@ def send_data_lorawan():
     print("Battery voltage: " + str(battery))
     blink_led(color=config.COLOR_GREEN)
     lpp.reset()
-    lpp.add_voltage(5, battery)
+    lpp.add_analog_input(1, battery)
     print('Sending data (uplink)...')
     s.setblocking(True)
     s.bind(1)
     s.send(bytes(lpp.get_buffer()))
     s.setblocking(False)
     dl_data = s.recv(64)
-    if dl_data != "":
+    if len(dl_data) > 0:
         print('Received data (downlink)', dl_data)
         print(lora.stats)
 
@@ -84,4 +84,4 @@ s.setsockopt(socket.SOL_LORA, socket.SO_DR, config.DATARATE)
 while True:
     check_join()
     send_data_lorawan()
-    time.sleep(20)
+    time.sleep(config.SLEEP_TIMER)
